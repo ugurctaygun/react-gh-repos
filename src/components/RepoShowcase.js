@@ -6,13 +6,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FolderIcon from "@mui/icons-material/Folder";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { useSelector } from "react-redux";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import Spinner from "./Spinner";
 import { makeStyles } from "@material-ui/core/styles";
+import { Button } from "@mui/material";
+import { updateState } from "../features/TaskSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   anchor: {
@@ -21,12 +23,27 @@ const useStyles = makeStyles({
   flexDiv: {
     display: "flex",
   },
+  listContainer: {
+    overflowY: "auto",
+    height: "80vh",
+  },
 });
 
 function RepoShowcase() {
   const classes = useStyles();
   const tasks = useSelector((state) => state.tasks.value);
+  const dispatch = useDispatch();
   const [gitData, setGitData] = useState({ data: null, repos: null });
+  const addItemHandler = (value) => {
+    let toDoObject = {};
+    toDoObject.name = value;
+    dispatch(
+      updateState({
+        ...tasks,
+        toDoList: [...tasks.toDoList, toDoObject],
+      })
+    );
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,12 +57,10 @@ function RepoShowcase() {
       } catch (error) {
         console.error(error.message);
       }
-      // setLoading(false);
     };
 
     fetchData();
-  }, []);
-  console.log(gitData);
+  }, [tasks]);
 
   if (gitData.data === null) {
     return <Spinner />;
@@ -57,15 +72,30 @@ function RepoShowcase() {
         <Avatar sx={{ mr: 2 }} alt="Remy Sharp" src={gitData.data.avatar_url} />
         {gitData.data.login}'s Repositories
       </Typography>
-      <div>
+      <div className={classes.listContainer}>
         <List>
           {gitData.repos.map((item) => (
             <ListItem
               key={item.id}
               secondaryAction={
-                <IconButton edge="end" aria-label="add">
-                  <AddCircleIcon />
-                </IconButton>
+                tasks.toDoList.find((todo) => todo["name"] === item.name) ? (
+                  <Button
+                    // onClick={() => addItemHandler(item.name)}
+                    variant="outlined"
+                    endIcon={<RemoveCircleIcon />}
+                    color="error"
+                  >
+                    Remove from the tasks
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => addItemHandler(item.name)}
+                    variant="outlined"
+                    endIcon={<AddCircleIcon />}
+                  >
+                    Add to the Tasks
+                  </Button>
+                )
               }
             >
               <a

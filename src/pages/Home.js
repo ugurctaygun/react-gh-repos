@@ -8,12 +8,12 @@ function Home() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={12} md={6} lg={7}>
-        <Paper sx={{ height: "100%" }} variant="outlined">
+        <Paper variant="outlined">
           <RepoShowcase />
         </Paper>
       </Grid>
       <Grid item xs={12} md={6} lg={5}>
-        <Paper sx={{ height: "80vh" }} variant="outlined">
+        <Paper variant="outlined">
           <TaskManager />
         </Paper>
       </Grid>

@@ -6,7 +6,7 @@ export const taskSlice = createSlice({
     value: {
       isAuthenticated: false,
       accessToken: null,
-      tasks: null,
+      toDoList: [],
     },
   },
   reducers: {

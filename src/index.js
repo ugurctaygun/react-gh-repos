@@ -17,11 +17,11 @@ const store = configureStore({
 });
 
 if (persistedState) {
-  let { isAuthenticated, tasks, accessToken } = persistedState.tasks.value;
+  let { isAuthenticated, toDoList, accessToken } = persistedState.tasks.value;
   store.dispatch(
     updateState({
       isAuthenticated: isAuthenticated,
-      tasks: tasks,
+      toDoList: toDoList,
       accessToken: accessToken,
     })
   );
