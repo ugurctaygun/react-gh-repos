@@ -1,23 +1,16 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import RepoShowcase from "./components/RepoShowcase";
-import TaskManager from "./components/TaskManager";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
-    <Grid container spacing={4}>
-      <Grid item xs={12} md={6} lg={7}>
-        <Paper sx={{ height: "80vh" }} elevation={3} variant="outlined">
-          <RepoShowcase />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={6} lg={5}>
-        <Paper sx={{ height: "80vh" }} elevation={3} variant="outlined">
-          <TaskManager />
-        </Paper>
-      </Grid>
-    </Grid>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
