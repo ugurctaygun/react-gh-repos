@@ -27,6 +27,13 @@ const useStyles = makeStyles({
     overflowY: "auto",
     height: "80vh",
   },
+  listItem: {
+    "@media (max-width: 780px)": {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+    },
+  },
 });
 
 function RepoShowcase() {
@@ -41,6 +48,14 @@ function RepoShowcase() {
       updateState({
         ...tasks,
         toDoList: [...tasks.toDoList, toDoObject],
+      })
+    );
+  };
+  const removeItemHandler = (value) => {
+    dispatch(
+      updateState({
+        ...tasks,
+        toDoList: tasks.toDoList.filter((item) => item.name !== value),
       })
     );
   };
@@ -75,29 +90,7 @@ function RepoShowcase() {
       <div className={classes.listContainer}>
         <List>
           {gitData.repos.map((item) => (
-            <ListItem
-              key={item.id}
-              secondaryAction={
-                tasks.toDoList.find((todo) => todo["name"] === item.name) ? (
-                  <Button
-                    // onClick={() => addItemHandler(item.name)}
-                    variant="outlined"
-                    endIcon={<RemoveCircleIcon />}
-                    color="error"
-                  >
-                    Remove from the tasks
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => addItemHandler(item.name)}
-                    variant="outlined"
-                    endIcon={<AddCircleIcon />}
-                  >
-                    Add to the Tasks
-                  </Button>
-                )
-              }
-            >
+            <ListItem className={classes.listItem} key={item.id}>
               <a
                 href={item.html_url}
                 target="_blank"
@@ -112,6 +105,25 @@ function RepoShowcase() {
               </a>
 
               <ListItemText primary={item.name} secondary={item.description} />
+
+              {tasks.toDoList.find((todo) => todo["name"] === item.name) ? (
+                <Button
+                  onClick={() => removeItemHandler(item.name)}
+                  variant="outlined"
+                  endIcon={<RemoveCircleIcon />}
+                  color="error"
+                >
+                  Remove from the tasks
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => addItemHandler(item.name)}
+                  variant="outlined"
+                  endIcon={<AddCircleIcon />}
+                >
+                  Add to the Tasks
+                </Button>
+              )}
             </ListItem>
           ))}
         </List>

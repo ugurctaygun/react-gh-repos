@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 
 const App = () => {
   const tasks = useSelector((state) => state.tasks.value);
-  console.log(tasks.isAuthenticated);
   return (
     <BrowserRouter>
       <Routes>

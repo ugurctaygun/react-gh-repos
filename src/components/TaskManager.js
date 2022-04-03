@@ -6,6 +6,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Typography from "@mui/material/Typography";
 import { updateState } from "../features/TaskSlice";
@@ -18,7 +19,7 @@ function TaskManager() {
   const dispatch = useDispatch();
   const [managerMode, setManagerMode] = useState(true);
   const [subtaskName, setSubtaskName] = useState();
-  const [subTaskContent, setSubtaskContent] = useState({ subtask: "" });
+  const [subTaskContent, setSubtaskContent] = useState(null);
 
   const taskModeHandler = () => {
     setManagerMode(true);
@@ -30,10 +31,25 @@ function TaskManager() {
 
   const subTaskInputHandler = (e) => {
     const value = e.target.value;
-    setSubtaskContent({
-      ...subTaskContent,
-      [e.target.name]: value,
-    });
+    setSubtaskContent(value);
+  };
+
+  const addSubTask = (value) => {
+    let subTaskObject = {};
+    subTaskObject.for = value;
+    subTaskObject.content = subTaskContent;
+    subTaskObject.completed = false;
+
+    dispatch(
+      updateState({
+        ...tasks,
+        subTaskList: [...tasks.subTaskList, subTaskObject],
+      })
+    );
+
+    console.log(
+      tasks.subTaskList.filter((item) => item.for === "canvas-game-of-life")
+    );
   };
 
   if (managerMode) {
@@ -54,20 +70,22 @@ function TaskManager() {
           tasks.toDoList.map((item) => (
             <List
               key={item.name}
-              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+              sx={{ width: "100%", bgcolor: "background.paper" }}
               component="nav"
             >
               <ListItemButton>
                 <ListItemIcon>{tasks.toDoList.indexOf(item) + 1}</ListItemIcon>
                 <ListItemText primary={item.name} secondary={`${0} Subtasks`} />
-                <ListItemIcon
+                <Button
                   onClick={() => {
                     subtaskModeHandler();
                     setSubtaskName(item.name);
                   }}
+                  variant="outlined"
+                  endIcon={<AssignmentIcon />}
                 >
-                  <AssignmentIcon />
-                </ListItemIcon>
+                  Manage Subtasks
+                </Button>
               </ListItemButton>
             </List>
           ))
@@ -82,6 +100,14 @@ function TaskManager() {
         <Typography variant="h6" component="div">
           {subtaskName} Subtasks
         </Typography>
+        {tasks.subTaskList.filter((item) => item.for === subtaskName).length >
+        0 ? (
+          tasks.subTaskList
+            .filter((item) => item.for === subtaskName)
+            .map((item) => <div>{item.content}</div>)
+        ) : (
+          <div>Yok</div>
+        )}
         <Box sx={{ mt: 2, display: "flex" }}>
           <TextField
             id="outlined-basic"
@@ -93,14 +119,19 @@ function TaskManager() {
             variant="outlined"
             onChange={subTaskInputHandler}
           />
-          <Button>
-            <AddCircleIcon />
+          <Button
+            onClick={() => addSubTask(subtaskName)}
+            startIcon={<AddCircleIcon />}
+            variant="outlined"
+            sx={{ ml: 1 }}
+          >
+            Add Subtask
           </Button>
         </Box>
         <Button
           variant="outlined"
           onClick={taskModeHandler}
-          startIcon={<PriorityHighIcon />}
+          startIcon={<ArrowBackIcon />}
           sx={{ mt: 2 }}
         >
           Back to list
