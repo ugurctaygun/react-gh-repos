@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,36 +9,34 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FolderIcon from "@mui/icons-material/Folder";
-import DeleteIcon from "@mui/icons-material/Delete";
-
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useSelector } from "react-redux";
+import Spinner from "./Spinner";
+import { makeStyles } from "@material-ui/core/styles";
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-}
-
-const Demo = styled("div")(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-}));
+const useStyles = makeStyles({
+  anchor: {
+    cursor: "pointer !important",
+  },
+  flexDiv: {
+    display: "flex",
+  },
+});
 
 function RepoShowcase() {
+  const classes = useStyles();
   const tasks = useSelector((state) => state.tasks.value);
-  const [data, setData] = useState(null);
+  const [gitData, setGitData] = useState({ data: null, repos: null });
   useEffect(() => {
     const fetchData = async () => {
-      // setLoading(true);
       try {
-        const { data: response } = await axios.get(
-          "https://api.github.com/user",
-          {
-            headers: { Authorization: `Bearer ${tasks.accessToken}` },
-          }
-        );
-        setData(response);
+        const userInfo = await axios.get("https://api.github.com/user", {
+          headers: { Authorization: `Bearer ${tasks.accessToken}` },
+        });
+        const repoInfo = await axios.get("https://api.github.com/user/repos", {
+          headers: { Authorization: `Bearer ${tasks.accessToken}` },
+        });
+        setGitData({ data: userInfo.data, repos: repoInfo.data });
       } catch (error) {
         console.error(error.message);
       }
@@ -48,35 +45,47 @@ function RepoShowcase() {
 
     fetchData();
   }, []);
-  console.log(data);
+  console.log(gitData);
+
+  if (gitData.data === null) {
+    return <Spinner />;
+  }
+
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" component="div">
-        Avatar with text and icon
+      <Typography variant="h6" component="div" className={classes.flexDiv}>
+        <Avatar sx={{ mr: 2 }} alt="Remy Sharp" src={gitData.data.avatar_url} />
+        {gitData.data.login}'s Repositories
       </Typography>
-      <Demo>
+      <div>
         <List>
-          {generate(
+          {gitData.repos.map((item) => (
             <ListItem
+              key={item.id}
               secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
+                <IconButton edge="end" aria-label="add">
+                  <AddCircleIcon />
                 </IconButton>
               }
             >
-              <ListItemAvatar>
-                <Avatar>
-                  <FolderIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary="Single-line item"
-                secondary="Secondary text"
-              />
+              <a
+                href={item.html_url}
+                target="_blank"
+                className={classes.anchor}
+                rel="noreferrer"
+              >
+                <ListItemAvatar>
+                  <Avatar>
+                    <FolderIcon />
+                  </Avatar>
+                </ListItemAvatar>
+              </a>
+
+              <ListItemText primary={item.name} secondary={item.description} />
             </ListItem>
-          )}
+          ))}
         </List>
-      </Demo>
+      </div>
     </Box>
   );
 }

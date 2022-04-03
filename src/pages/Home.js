@@ -8,7 +8,7 @@ function Home() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={12} md={6} lg={7}>
-        <Paper sx={{ height: "80vh" }} variant="outlined">
+        <Paper sx={{ height: "100%" }} variant="outlined">
           <RepoShowcase />
         </Paper>
       </Grid>
