@@ -23,10 +23,13 @@ const provider = new GithubAuthProvider();
 
 provider.addScope("repo");
 
-export const signInWithGitHub = () => {
+export const signInWithGitHub = (callback) => {
   signInWithPopup(auth, provider)
     .then((result) => {
-      console.log(result);
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+
+      callback({ data: token });
     })
     .catch((error) => {
       console.log(error);

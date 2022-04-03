@@ -27,13 +27,22 @@ function Login() {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasks.value);
   const classes = useStyles();
-  const clickHandler = () => {
-    dispatch(
-      updateState({
-        ...tasks,
-        isAuthenticated: "testo",
-      })
-    );
+  const clickHandler = async () => {
+    signInWithGitHub((result) => {
+      const { data, error } = result;
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        dispatch(
+          updateState({
+            ...tasks,
+            isAuthenticated: true,
+            accessToken: data,
+          })
+        );
+      }
+    });
   };
   return (
     <Container className={classes.container}>

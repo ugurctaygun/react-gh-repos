@@ -5,6 +5,7 @@ export const taskSlice = createSlice({
   initialState: {
     value: {
       isAuthenticated: false,
+      accessToken: null,
       tasks: null,
     },
   },
