@@ -20,6 +20,7 @@ function TaskManager() {
   const dispatch = useDispatch();
   const [managerMode, setManagerMode] = useState(true);
   const [subtaskName, setSubtaskName] = useState();
+  const [warning, setWarning] = useState(null);
   const [subTaskContent, setSubtaskContent] = useState(null);
 
   const taskModeHandler = () => {
@@ -32,25 +33,27 @@ function TaskManager() {
 
   const subTaskInputHandler = (e) => {
     const value = e.target.value;
-    setSubtaskContent(value);
+    if (e.target.value.length > 5) {
+      setSubtaskContent(value);
+    } else {
+      setWarning("Requires minimum of 5 characters");
+    }
   };
 
   const addSubTask = (value) => {
-    let subTaskObject = {};
-    subTaskObject.for = value;
-    subTaskObject.content = subTaskContent;
-    subTaskObject.completed = false;
+    if (subTaskContent) {
+      let subTaskObject = {};
+      subTaskObject.for = value;
+      subTaskObject.content = subTaskContent;
+      subTaskObject.completed = false;
 
-    dispatch(
-      updateState({
-        ...tasks,
-        subTaskList: [...tasks.subTaskList, subTaskObject],
-      })
-    );
-
-    console.log(
-      tasks.subTaskList.filter((item) => item.for === "canvas-game-of-life")
-    );
+      dispatch(
+        updateState({
+          ...tasks,
+          subTaskList: [...tasks.subTaskList, subTaskObject],
+        })
+      );
+    }
   };
 
   if (managerMode) {
@@ -59,7 +62,7 @@ function TaskManager() {
         <Typography variant="h6" component="div">
           Task Manager
         </Typography>
-        {tasks.toDoList.length < 1 ? (
+        {tasks && tasks.toDoList.length < 1 ? (
           <Button
             variant="outlined"
             endIcon={<PriorityHighIcon />}
@@ -132,12 +135,13 @@ function TaskManager() {
             sx={{ minWidth: "300px" }}
             variant="outlined"
             onChange={subTaskInputHandler}
+            helperText={warning ? warning : null}
           />
           <Button
             onClick={() => addSubTask(subtaskName)}
             startIcon={<AddCircleIcon />}
             variant="outlined"
-            sx={{ ml: 1 }}
+            sx={{ ml: 1, maxHeight: "56px" }}
           >
             Add Subtask
           </Button>
