@@ -13,6 +13,7 @@ import { updateState } from "../features/TaskSlice";
 import { useSelector, useDispatch } from "react-redux";
 import TextField from "@mui/material/TextField";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import TaskItems from "./TaskItems";
 
 function TaskManager() {
   const tasks = useSelector((state) => state.tasks.value);
@@ -75,7 +76,14 @@ function TaskManager() {
             >
               <ListItemButton>
                 <ListItemIcon>{tasks.toDoList.indexOf(item) + 1}</ListItemIcon>
-                <ListItemText primary={item.name} secondary={`${0} Subtasks`} />
+                <ListItemText
+                  primary={item.name}
+                  secondary={`${
+                    tasks.subTaskList.filter(
+                      (subtaskListItem) => subtaskListItem.for === item.name
+                    ).length
+                  } Subtasks`}
+                />
                 <Button
                   onClick={() => {
                     subtaskModeHandler();
@@ -102,12 +110,18 @@ function TaskManager() {
         </Typography>
         {tasks.subTaskList.filter((item) => item.for === subtaskName).length >
         0 ? (
-          tasks.subTaskList
-            .filter((item) => item.for === subtaskName)
-            .map((item) => <div>{item.content}</div>)
-        ) : (
-          <div>Yok</div>
-        )}
+          <List>
+            {tasks.subTaskList
+              .filter((item) => item.for === subtaskName)
+              .map((item) => (
+                <TaskItems
+                  key={tasks.subTaskList.indexOf(item) + 1}
+                  item={item}
+                  uid={tasks.subTaskList.indexOf(item) + 1}
+                />
+              ))}
+          </List>
+        ) : null}
         <Box sx={{ mt: 2, display: "flex" }}>
           <TextField
             id="outlined-basic"

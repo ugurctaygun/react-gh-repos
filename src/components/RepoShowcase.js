@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import FolderIcon from "@mui/icons-material/Folder";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import Spinner from "./Spinner";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,6 +27,7 @@ const useStyles = makeStyles({
   listContainer: {
     overflowY: "auto",
     height: "80vh",
+    marginTop: "20px",
   },
   listItem: {
     "@media (max-width: 780px)": {
@@ -59,6 +61,14 @@ function RepoShowcase() {
       })
     );
   };
+  const signOutHandler = () => {
+    dispatch(
+      updateState({
+        ...tasks,
+        isAuthenticated: false,
+      })
+    );
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,8 +94,17 @@ function RepoShowcase() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" component="div" className={classes.flexDiv}>
-        <Avatar sx={{ mr: 2 }} alt="Remy Sharp" src={gitData.data.avatar_url} />
+        <Avatar sx={{ mr: 2 }} src={gitData.data.avatar_url} />
         {gitData.data.login}'s Repositories
+        <Button
+          onClick={signOutHandler}
+          sx={{ ml: "auto", mr: 2 }}
+          variant="outlined"
+          endIcon={<LogoutIcon />}
+          color="info"
+        >
+          Sign Out
+        </Button>
       </Typography>
       <div className={classes.listContainer}>
         <List>
