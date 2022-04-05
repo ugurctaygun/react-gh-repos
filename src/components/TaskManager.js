@@ -120,7 +120,7 @@ function TaskManager() {
                 <TaskItems
                   key={tasks.subTaskList.indexOf(item) + 1}
                   item={item}
-                  uid={tasks.subTaskList.indexOf(item) + 1}
+                  completed={item.completed}
                 />
               ))}
           </List>
